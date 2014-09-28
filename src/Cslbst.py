@@ -25,7 +25,7 @@ class Solution:
             return None
         lst = [head.val]
         node = head.next
-        while node != None:
+        while None != node:
             lst.append(node.val)
             node = node.next
         return self.build(lst)
@@ -54,7 +54,7 @@ def genSortedListNodes(max):
     return h
 
 def dfs(fun, tr):
-    if (tr != None):
+    if None != tr:
         dfs(fun, tr.left)
         fun(tr.val)
         dfs(fun, tr.right)
@@ -67,6 +67,10 @@ l.next.next = ListNode(3)
 
 lst = genSortedListNodes(5)
 tr = Solution().sortedListToBST(lst)
-dfs(print, tr)
+
+def p(s):
+   print s
+
+dfs(p, tr)
 
 
