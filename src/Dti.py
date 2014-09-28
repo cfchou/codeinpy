@@ -12,6 +12,33 @@ class Solution:
         dividend = abs(dividend)
         divisor = abs(divisor)
 
+        remainder, quotient = self.rdiv(dividend, divisor, 0, 1)
+        if isPos:
+            return quotient
+        else:
+            return -quotient
+
+    def rdiv(self, dividend, divisor, quotient, powered):
+        if dividend >= divisor:
+            dividend -= divisor
+            quotient += powered
+            if dividend > 0:
+                dividend, quotient = self.rdiv(dividend, divisor + divisor,
+                                               quotient, powered << 1)
+            if dividend >= divisor:
+                dividend -= divisor
+                quotient += powered
+            return dividend, quotient
+        return dividend, quotient
+
+    def divide3(self, dividend, divisor):
+        isPos = True
+        if dividend < 0 < divisor or dividend > 0 > divisor:
+            isPos = False
+
+        dividend = abs(dividend)
+        divisor = abs(divisor)
+
         tbl = [0, divisor]  # 0, div, 2*div, 4*div, ...
         qtbl = [0, 1]  # 0, 1, 2, 4, ....
         end = 1
