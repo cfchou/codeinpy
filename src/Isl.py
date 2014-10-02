@@ -3,6 +3,7 @@ __author__ = 'chifeng'
 # https://oj.leetcode.com/problems/insertion-sort-list/
 
 # Definition for singly-linked list.
+import random
 class ListNode:
     def __init__(self, x):
         self.val = x
@@ -13,29 +14,46 @@ class Solution:
     # @return a ListNode
     def insertionSortList(self, head):
         hl = self.listNodeToList(head)
-        shuffed = self.suffle(hl)
-        sl = self.insertionSort(shuffed)
-        return self.listToListNode(sl)
+        self.shuffle(hl)
+        self.insertionSort(hl)
+        ret = self.listToListNode(hl)
+        return ret
 
     def listNodeToList(self, head):
         ret = []
         while head:
-            ret.append(head.v)
+            ret.append(head.val)
             head = head.next
         return ret
 
     def listToListNode(self, lst):
+        if 0 == len(lst):
+            return None
         tmp = map(ListNode, lst)
         ret = tmp[len(tmp) - 1]
         for i in range(len(tmp) - 2, -1, -1):
             tmp[i].next = ret
+            ret = tmp[i]
         return ret
 
     def shuffle(self, lst):
-        pass
+        random.seed()
+        # random.shuffle(lst)
+        #
+        end = len(lst) - 1
+        for i in range(end):
+            j = random.randint(i, end)
+            if i != j:
+                lst[i], lst[j] = lst[j], lst[i]
+        return lst
 
     def insertionSort(self, lst):
-        pass
+        for i in range(1, len(lst)):
+            for j in range(i, 0, -1):
+                if lst[j] >= lst[j - 1]:
+                    break
+                lst[j], lst[j - 1] = lst[j - 1], lst[j]
+        return lst
 
 
     def insertionSortListTry2(self, head):
@@ -120,8 +138,9 @@ def createList(n):
 
 sol = Solution()
 
-lst = createList(5000)
+lst = createList(10)
 printNodes(lst)
+print("------")
 ret = sol.insertionSortList(lst)
 printNodes(ret)
 
