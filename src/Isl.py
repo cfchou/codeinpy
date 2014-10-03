@@ -14,7 +14,7 @@ class Solution:
     # @return a ListNode
     def insertionSortList(self, head):
         hl = self.listNodeToList(head)
-        self.shuffle(hl)
+        #self.shuffle(hl)
         self.insertionSort(hl)
         ret = self.listToListNode(hl)
         return ret
@@ -126,23 +126,30 @@ def printNodes(head):
         print(head.val)
         head = head.next
 
-def createList(n):
-    if n < 1:
+def createList(lst):
+    if len(lst) < 1:
         return None
     start = ListNode(0)
     prev = start
-    for i in range(1, n):
+    for i in lst:
         prev.next = ListNode(i)
         prev = prev.next
     return start
 
 sol = Solution()
 
-lst = createList(10)
-printNodes(lst)
+# lst = createList(xrange(5001))
+# printNodes(lst)
+# print("------")
+# ret = sol.insertionSortList(lst)
+# printNodes(ret)
+# print("======")
+rlst = createList(xrange(5000, -1, -1))
+printNodes(rlst)
 print("------")
-ret = sol.insertionSortList(lst)
+ret = sol.insertionSortList(rlst)
 printNodes(ret)
+print("======")
 
 
 # arr = map(lambda i: ListNode(i), range(10))
