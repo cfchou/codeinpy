@@ -9,10 +9,226 @@ class ListNode:
         self.val = x
         self.next = None
 
+class DListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+        self.prev = None
+
 class Solution:
+    def __init__(self):
+        self.asc = None
+        self.dsc = None
     # @param head, a ListNode
     # @return a ListNode
     def insertionSortList(self, head):
+        self.asc, self.dsc = None, None
+        def appendTo(node, cur):
+            next = cur.next
+            cur.next = node
+            node.prev = cur
+            node.next = next
+            if None == node.next:
+                self.dsc = node
+            else:
+                next.prev = node
+            return
+        def preppendTo(node, cur):
+            prev = cur.prev
+            cur.prev = node
+            node.prev = prev
+            node.next = cur
+            if None == node.prev:
+                self.asc = node
+            else:
+                prev.next = node
+            return
+
+        while head:
+            node = DListNode(head.val)
+            head = head.next
+            if None == self.asc:
+                self.asc = DListNode(node.val)
+                self.dsc = self.asc
+                continue
+            ascCur, dscCur = self.asc, self.dsc
+            while True:
+                #assert None == self.asc.prev and None == self.dsc.next
+                if self.asc is self.dsc:
+                    if node.val <= self.asc.val:
+                        self.asc = node
+                    else:
+                        self.dsc = node
+                    self.asc.next = self.dsc
+                    self.dsc.prev = self.asc
+                    break
+
+                #assert ascCur and dscCur
+                if ascCur is dscCur:
+                    if node.val <= ascCur.val:
+                        preppendTo(node, ascCur)
+                    else:
+                        appendTo(node, ascCur)
+                    break
+                # cross
+                if ascCur.prev is dscCur:
+                    #assert dscCur.next is ascCur
+                    if node.val <= dscCur.val:
+                        preppendTo(node, dscCur)
+                    elif node.val <= ascCur.val:
+                        preppendTo(node, ascCur)
+                    else:
+                        appendTo(node, ascCur)
+                    break
+
+                if node.val <= ascCur.val:
+                    preppendTo(node, ascCur)
+                    break
+                if node.val >= dscCur.val:
+                    appendTo(node, dscCur)
+                    break
+                ascCur = ascCur.next
+                dscCur = dscCur.prev
+            # while True
+        # while head
+
+        ret = None
+        end = None
+        cur = self.asc
+        while cur:
+            if None == ret:
+                ret = ListNode(cur.val)
+                end = ret
+                cur = cur.next
+                continue
+            end.next = ListNode(cur.val)
+            end = end.next
+            cur = cur.next
+        return ret
+
+    def printFw(self, head):
+        line = ">>>\t\t"
+        while head:
+            line += ". {}".format(head.val)
+            head = head.next
+        print(line)
+
+    def printBw(self, head):
+        line = "<<<\t\t"
+        while head:
+            line += ". {}".format(head.val)
+            head = head.prev
+        print(line)
+
+
+
+
+def printNodes(head):
+    while head:
+        print(head.val)
+        head = head.next
+
+def printNodesRow(head):
+    lst = []
+    while head:
+        lst.append(head.val)
+        head = head.next
+    print(lst)
+
+def createList(lst):
+    if len(lst) < 1:
+        return None
+    start = ListNode(lst[0])
+    prev = start
+    for i in lst[1:]:
+        prev.next = ListNode(i)
+        prev = prev.next
+    return start
+
+def createRandomList(sz, seq):
+    lst = map(lambda x: random.choice(seq), range(sz))
+    return createList(lst)
+
+
+def test1():
+    sol = Solution()
+    lst = createList(range(5000))
+    #printNodes(lst)
+    print("------")
+    ret = sol.insertionSortList(lst)
+    return ret
+
+def test2():
+    sol = Solution()
+    lst = createList(range(5000, -1, -1))
+    #printNodes(lst)
+    print("------")
+    ret = sol.insertionSortList(lst)
+    return ret
+
+def test3():
+    sol = Solution()
+    lst = createRandomList(5000, range(-1000, 1001))
+    printNodesRow(lst)
+    print("------")
+    ret = sol.insertionSortList(lst)
+    return ret
+
+def test4():
+    sol = Solution()
+    lst = createRandomList(10, range(-10, 10))
+    printNodes(lst)
+    print("------")
+    ret = sol.insertionSortList(lst)
+    return ret
+
+def test5():
+    sol = Solution()
+    arr = [7, 5, -5, -3, -7, 8]
+    lst = createList(arr)
+    printNodes(lst)
+    print("------")
+    ret = sol.insertionSortList(lst)
+    return ret
+
+test3()
+#printNodes(test5())
+
+
+class Solution2:
+    def insertionSortList(self, head):
+        sortedLN = head
+        if None == head:
+            return None
+        head = head.next
+        sortedLN.next = None
+        while head:
+            # dettach first node from head
+            node = head
+            head = head.next
+            node.next = None
+
+            if node.val <= sortedLN.val:
+                node.next = sortedLN
+                sortedLN = node
+                continue
+            snode = sortedLN
+            while True:
+                assert node.val > snode.val
+                if None == snode.next:
+                    snode.next = node
+                    break
+                else:
+                    if node.val <= snode.next.val:
+                        tmp = snode.next
+                        snode.next = node
+                        node.next = tmp
+                        break
+                    else:
+                        snode = snode.next
+        return sortedLN
+
+    def insertionSortListTry3(self, head):
         hl = self.listNodeToList(head)
         #self.shuffle(hl)
         self.insertionSort(hl)
@@ -36,17 +252,6 @@ class Solution:
             ret = tmp[i]
         return ret
 
-    def shuffle(self, lst):
-        random.seed()
-        # random.shuffle(lst)
-        #
-        end = len(lst) - 1
-        for i in range(end):
-            j = random.randint(i, end)
-            if i != j:
-                lst[i], lst[j] = lst[j], lst[i]
-        return lst
-
     def insertionSort(self, lst):
         for i in range(1, len(lst)):
             for j in range(i, 0, -1):
@@ -55,113 +260,12 @@ class Solution:
                 lst[j], lst[j - 1] = lst[j - 1], lst[j]
         return lst
 
-
-    def insertionSortListTry2(self, head):
-        def insertSorted(sortedList, node):
-            if None == sortedList:
-                node.next = None
-                return node
-            if node.val >= sortedList.val:
-                node.next = sortedList
-                return node
-            else:
-                sortedList.next = insertSorted(sortedList.next, node)
-                return sortedList
-
-        def reverseList(head):
-            if None == head:
-                return None
-            reversedHead = head
-            head = head.next
-            reversedHead.next = None
-            while head:
-                nnext = head.next
-                head.next = reversedHead
-                reversedHead = head
-                head = nnext
-            return reversedHead
-
-        sortedHead = None
-        while head:
-            nnext = head.next
-            sortedHead = insertSorted(sortedHead, head)
-            head = nnext
-        return reverseList(sortedHead)
-
-        # Receive "maximum recursion depth exceeded" error as recursion is not "pythonic"
-        # and tail recursion is not supported.
-        def reverseListRecur(head):
-            if None == head:
-                return None, None
-            if None == head.next:
-                return head, head
-            tmp = head
-            head, end = reverseListRecur(head.next)
-            end.next = tmp
-            tmp.next = None
-            return head, tmp
-
-    def insertionSortListTry(self, head):
-        def insertSorted(sortedList, node):
-            if None == sortedList:
-                node.next = None
-                return node
-            if node.val <= sortedList.val:
-                node.next = sortedList
-                return node
-            else:
-                sortedList.next = insertSorted(sortedList.next, node)
-                return sortedList
-
-        sortedHead = None
-        nnext = None
-        while head:
-            nnext = head.next
-            sortedHead = insertSorted(sortedHead, head)
-            head = nnext
-        return sortedHead
-
-def printNodes(head):
-    while head:
-        print(head.val)
-        head = head.next
-
-def createList(lst):
-    if len(lst) < 1:
-        return None
-    start = ListNode(0)
-    prev = start
-    for i in lst:
-        prev.next = ListNode(i)
-        prev = prev.next
-    return start
-
-sol = Solution()
-
-# lst = createList(xrange(5001))
-# printNodes(lst)
-# print("------")
-# ret = sol.insertionSortList(lst)
-# printNodes(ret)
-# print("======")
-rlst = createList(xrange(5000, -1, -1))
-printNodes(rlst)
-print("------")
-ret = sol.insertionSortList(rlst)
-printNodes(ret)
-print("======")
-
-
-# arr = map(lambda i: ListNode(i), range(10))
-# # 0,9,2,8,3
-# arr[0].next = arr[9]
-# arr[9].next = arr[2]
-# arr[2].next = arr[8]
-# arr[8].next = arr[3]
-# printNodes(arr[0])
-# ret = sol.insertionSortList(arr[0])
-# printNodes(ret)
-
-
-
-
+    def shuffle(self, lst):
+        random.seed()
+        # random.shuffle(lst)
+        end = len(lst) - 1
+        for i in range(end):
+            j = random.randint(i, end)
+            if i != j:
+                lst[i], lst[j] = lst[j], lst[i]
+        return lst
