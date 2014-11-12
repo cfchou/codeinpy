@@ -10,7 +10,7 @@ import matplotlib.dates as mdates
 import sys
 
 print 'pandas.__version__ is ', pd.__version__
-#print 'matplotlib.__version__ is ', matplotlib.__version__
+# print 'matplotlib.__version__ is ', matplotlib.__version__
 
 category = {
     0: '\"UNKNOWN\"',
@@ -25,12 +25,15 @@ category = {
     9: '\"HVAC\"'
 }
 
+
 def datetimeToMillies(d):
     epoch = datetime.utcfromtimestamp(0)
     # timedelta.total_seconds() return a float
     return (d - epoch).total_seconds() * 1000.0
 
-fig, ax = plt.subplots(1, 1, figsize=(15, 5))
+
+fig, ax = plt.subplots(1, 1, figsize=(15, 3))
+fig2, ax1 = plt.subplots(1, 1, figsize=(5, 5))
 
 path = "./postEvent.csv.out.csv"
 csv = pd.read_csv(path)
@@ -43,13 +46,32 @@ utc = csv.eventUTCTime.apply(
 csv['DatetimeUTC'] = utc
 
 cat = csv.loc[:, ['DatetimeUTC', 'category']]  # DataFrame
-cat.plot(kind='scatter', x='DatetimeUTC', y='category', ax=ax)
+
+#cc = cat.category.values
+cat4 = cat[cat.category == 4]
+
+s = pd.Series(data=cat4.category.values, index=cat4.DatetimeUTC)
+d = pd.DataFrame(s)
+ax.scatter(d.index, d[0], marker='v', c='r')
+#plot_date(cat.DatetimeUTC.astype(datetime), cat.category )
+#cat.plot(kind='scatter', x='DatetimeUTC', y='category', ax=ax)
 #cat.plot(x='DatetimeUTC', y='category', ax=ax, style='v--')
 ax.yaxis.grid()
 ax.yaxis.set_ticklabels(category.values())
 
-rng1 = pd.date_range('1/1/2011', periods=10, freq='H')
-rng2 = pd.date_range('2/1/2011', periods=10, freq='H')
+catE = cat[cat.category != 4]
+sE = pd.Series(data=catE.category.values, index=catE.DatetimeUTC)
+dE = pd.DataFrame(sE)
+ax.scatter(dE.index, dE[0], c='b')
+
+
+
+
+
+
+
+
+
 
 
 
