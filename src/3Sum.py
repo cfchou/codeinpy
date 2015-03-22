@@ -70,57 +70,6 @@ class Solution:
             else:
                 dict[n] = t + 1
         return cs, dict
-    '''
-    def threeSum(self, num):
-        if len(num) < 3:
-            return []
-        bs, cs, dict = self.sort_and_map(num)
-        print("bs: %s" % bs)
-        print("cs: %s" % cs)
-        lb = len(bs)
-        lc = len(cs)
-        if cs[0] * cs[lc - 1] > 0:
-            return []
-        tbl = [[0 for b in range(0, lb)] for c in range(0, lc)]
-        for i, c in enumerate(cs):
-            for j, b in enumerate(bs):
-                if b <= c:
-                    tbl[i][j] = -c - b
-
-        print(tbl)
-        ret = []
-        for i in range(lc - 1, -1, -1):
-            for j in range(0, lb):
-                if j == lb - 1 or bs[j + 1] > cs[i]:
-                    break
-                a = tbl[i][j]
-                if bs[0] <= a <= bs[j]:
-                    if j > 0 and a == bs[j] == bs[j - 1]:
-                        ret.append([a, bs[j], cs[i]])
-                        print("... %d, %d, %d" % (a, bs[j], cs[i]))
-                    elif a != bs[j] and a in dict:
-                        ret.append([a, bs[j], cs[i]])
-                        print("--- %d, %d, %d" % (a, bs[j], cs[i]))
-        return ret
-
-    def sort_and_map(self, num):
-        sn = sorted(num)
-        bs = []
-        cs = []
-        dict = {}
-        for n in sn:
-            t = dict.get(n)
-            if None == t:
-                bs.append(n)
-                cs.append(n)
-                dict[n] = 1
-            elif 1 == t or 2 == t:
-                bs.append(n)
-                dict[n] = t + 1
-            else:
-                dict[n] = t + 1
-        return bs, cs, dict
-    '''
 
     # Or we can shift num to be all positives
     # a + b + c = 3 * -min
